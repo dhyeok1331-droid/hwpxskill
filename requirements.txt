@@ -1,0 +1,7 @@
+lxml
+pywin32
+openpyxl
+xlrd
+pymupdf
+pytesseract
+Pillow

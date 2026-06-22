@@ -138,8 +138,18 @@ python3 scripts/page_guard.py --reference reference.hwpx --output result.hwpx
 ## 요구사항
 
 - Python 3.6 이상
-- lxml (`pip install lxml`)
+- `pip install -r requirements.txt` (lxml, pywin32, openpyxl, xlrd, pymupdf, pytesseract, Pillow)
 - 가상환경 권장
+
+배치 변환 스크립트(`convert_hwp_to_hwpx.py`, `excel_extract.py`, `pdf_extract.py`, `run_pipeline.py`)는 추가로 다음이 필요함 (pip로 안 깔리는 외부 프로그램):
+
+- **한컴오피스(한글)** — Windows에 설치되어 있어야 함. `convert_hwp_to_hwpx.py`가 COM으로 직접 띄워서 사용
+- **Tesseract OCR** (+ 한국어 언어팩) — `pdf_extract.py`가 스캔본 PDF를 처리할 때 사용
+  ```powershell
+  winget install --id UB-Mannheim.TesseractOCR -e
+  # 기본 설치엔 한국어 언어팩이 없어서 따로 받아야 함:
+  Invoke-WebRequest -Uri "https://github.com/tesseract-ocr/tessdata/raw/main/kor.traineddata" -OutFile "C:\Program Files\Tesseract-OCR\tessdata\kor.traineddata"
+  ```
 
 ## 스크립트
 
@@ -150,6 +160,11 @@ python3 scripts/page_guard.py --reference reference.hwpx --output result.hwpx
 | `office/unpack.py` | HWPX를 디렉토리로 풀기 |
 | `office/pack.py` | 디렉토리를 HWPX로 묶기 |
 | `validate.py` | HWPX 구조 검증 |
+| `convert_hwp_to_hwpx.py` | .hwp → .hwpx 일괄 변환 (한컴오피스 자동화) |
+| `excel_extract.py` | .xlsx/.xls → Markdown 표 일괄 변환 |
+| `pdf_extract.py` | .pdf → Markdown 일괄 변환 (스캔본은 OCR) |
+| `find_pdf_duplicates.py` | hwp/hwpx와 중복된 pdf 후보 탐지 |
+| `run_pipeline.py` | 위 변환들을 한 폴더에 대해 한 번에 실행 |
 | `page_guard.py` | 원본 대비 페이지 수 변동 감지 |
 | `text_extract.py` | 텍스트 추출 |
 | `batch_extract.py` | 폴더 내 모든 HWPX 일괄 텍스트 추출 |
