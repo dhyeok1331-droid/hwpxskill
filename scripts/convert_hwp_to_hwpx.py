@@ -40,8 +40,8 @@ def convert_folder(input_dir: Path, *, output_dir: Path | None, recursive: bool,
                 dest_dir = src.parent
             dest = dest_dir / src.with_suffix(".hwpx").name
 
-            if skip_existing and dest.exists():
-                print(f"SKIP {src} (already converted)", flush=True)
+            if skip_existing and dest.exists() and dest.stat().st_mtime >= src.stat().st_mtime:
+                print(f"SKIP {src} (up to date)", flush=True)
                 skipped += 1
                 continue
 
