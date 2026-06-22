@@ -44,6 +44,11 @@ def main() -> None:
         action="store_true",
         help="Search subfolders as well",
     )
+    parser.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Skip files that already have a matching output (for resuming an interrupted run)",
+    )
     args = parser.parse_args()
 
     input_dir = Path(args.input_dir)
@@ -62,7 +67,7 @@ def main() -> None:
     if output_dir:
         output_dir.mkdir(parents=True, exist_ok=True)
 
-    ok, failed = 0, 0
+    ok, failed, skipped = 0, 0, 0
     for src in files:
         if output_dir:
             dest_dir = output_dir / src.parent.relative_to(input_dir)
@@ -70,6 +75,12 @@ def main() -> None:
         else:
             dest_dir = src.parent
         dest = dest_dir / src.with_suffix(ext).name
+
+        if args.skip_existing and dest.exists():
+            print(f"SKIP {src} (already converted)", flush=True)
+            skipped += 1
+            continue
+
         try:
             if args.format == "markdown":
                 result = extract_markdown(str(src))
@@ -82,7 +93,7 @@ def main() -> None:
             print(f"FAIL {src}: {exc}", file=sys.stderr, flush=True)
             failed += 1
 
-    print(f"\nDone: {ok} converted, {failed} failed.", file=sys.stderr)
+    print(f"\nDone: {ok} converted, {skipped} skipped, {failed} failed.", file=sys.stderr)
     if failed:
         sys.exit(1)
 

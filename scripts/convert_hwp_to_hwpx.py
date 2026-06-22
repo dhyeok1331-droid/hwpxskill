@@ -46,12 +46,17 @@ def convert_folder(input_dir: Path, *, output_dir: Path | None, recursive: bool,
                 continue
 
             try:
-                hwp.Open(str(src))
-                hwp.SaveAs(str(dest), "HWPX")
+                if not hwp.Open(str(src.resolve())):
+                    raise RuntimeError("Open() returned falsy")
+                if not hwp.SaveAs(str(dest.resolve()), "HWPX"):
+                    raise RuntimeError("SaveAs() returned falsy")
                 hwp.Clear(1)
+                if not dest.exists():
+                    raise RuntimeError("SaveAs reported success but output file is missing")
                 print(f"OK   {src} -> {dest}", flush=True)
                 ok += 1
             except Exception as exc:
+                hwp.Clear(1)
                 print(f"FAIL {src}: {exc}", file=sys.stderr, flush=True)
                 failed += 1
     finally:
