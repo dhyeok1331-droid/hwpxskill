@@ -94,7 +94,8 @@ source "$VENV"
 │   ├── analyze_template.py               # HWPX 심층 분석 (레퍼런스 기반 생성용)
 │   ├── validate.py                       # HWPX 구조 검증
 │   ├── page_guard.py                     # 레퍼런스 대비 페이지 드리프트 위험 검사
-│   └── text_extract.py                   # 텍스트 추출
+│   ├── text_extract.py                   # 텍스트 추출
+│   └── batch_extract.py                  # 폴더 내 모든 HWPX 일괄 텍스트 추출
 ├── templates/
 │   ├── base/                             # 베이스 템플릿 (Skeleton 기반)
 │   │   ├── mimetype, META-INF/*, version.xml, settings.xml, Preview/*
@@ -460,6 +461,20 @@ with TextExtractor("document.hwpx") as ext:
     print(text)
 ```
 
+### 폴더 일괄 추출
+
+폴더 안의 모든 `.hwpx`를 한 번에 마크다운(또는 텍스트)으로 변환:
+
+```bash
+python3 "$SKILL_DIR/scripts/batch_extract.py" ./hwpx_files --format markdown
+
+# 결과를 다른 폴더에 모으기
+python3 "$SKILL_DIR/scripts/batch_extract.py" ./hwpx_files --format markdown --output-dir ./md_out
+
+# 하위 폴더까지 검색
+python3 "$SKILL_DIR/scripts/batch_extract.py" ./hwpx_files --recursive
+```
+
 ---
 
 ## 워크플로우 4: 검증
@@ -554,6 +569,7 @@ python3 "$SKILL_DIR/scripts/page_guard.py" \
 | `scripts/validate.py` | HWPX 파일 구조 검증 |
 | `scripts/page_guard.py` | 레퍼런스 대비 페이지 드리프트 위험 검사 (필수 게이트) |
 | `scripts/text_extract.py` | HWPX 텍스트 추출 |
+| `scripts/batch_extract.py` | 폴더 내 모든 HWPX 일괄 텍스트 추출 |
 
 ## 단위 변환
 

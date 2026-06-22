@@ -90,6 +90,12 @@ python3 scripts/office/pack.py ./unpacked/ edited.hwpx
 python3 scripts/text_extract.py document.hwpx --format markdown
 ```
 
+폴더에 HWPX 파일을 여러 개 모아두고 한 번에 마크다운으로 바꾸고 싶다면:
+
+```bash
+python3 scripts/batch_extract.py ./hwpx_files --format markdown
+```
+
 ### 4. 문서 검증
 
 ZIP 구조, XML 유효성, mimetype 위치 같은 걸 점검합니다.
@@ -146,6 +152,7 @@ python3 scripts/page_guard.py --reference reference.hwpx --output result.hwpx
 | `validate.py` | HWPX 구조 검증 |
 | `page_guard.py` | 원본 대비 페이지 수 변동 감지 |
 | `text_extract.py` | 텍스트 추출 |
+| `batch_extract.py` | 폴더 내 모든 HWPX 일괄 텍스트 추출 |
 
 ## 자세한 사용법
 

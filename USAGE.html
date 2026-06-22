@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hwpxskill 사용법</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-2: #1d2129;
+    --text: #e6e8eb;
+    --muted: #9aa3af;
+    --accent: #4d8cff;
+    --accent-2: #7bdc9c;
+    --warn: #ffb454;
+    --danger: #ff6b6b;
+    --border: #2a2f3a;
+    --code-bg: #11151c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .layout { display: flex; max-width: 1200px; margin: 0 auto; }
+  nav.toc {
+    width: 230px;
+    flex-shrink: 0;
+    padding: 32px 16px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+  }
+  nav.toc h2 {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 12px;
+  }
+  nav.toc a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-bottom: 2px;
+  }
+  nav.toc a:hover { background: var(--panel-2); color: var(--text); }
+  main { flex: 1; padding: 40px 48px 100px; min-width: 0; }
+
+  header.hero {
+    padding: 28px 28px;
+    background: linear-gradient(135deg, #1b2638, #161a22);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 36px;
+  }
+  header.hero h1 { margin: 0 0 8px; font-size: 28px; }
+  header.hero p { margin: 0; color: var(--muted); font-size: 15px; }
+  .badges { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--accent-2);
+  }
+
+  section { margin-bottom: 48px; }
+  h2 {
+    font-size: 21px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+    scroll-margin-top: 20px;
+  }
+  h2 .num { color: var(--accent); margin-right: 8px; }
+  h3 { font-size: 16px; margin-top: 28px; color: var(--text); scroll-margin-top: 20px; }
+  p { color: #d4d7dc; }
+  ul, ol { color: #d4d7dc; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .card h4 { margin: 0 0 8px; font-size: 14px; color: var(--accent); }
+
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .step .n {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step .body { flex: 1; }
+  .step .body b { color: var(--text); }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  code {
+    font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
+    color: #c9d1d9;
+  }
+  p code, li code, td code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--accent-2);
+  }
+  pre code { background: none; border: none; padding: 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 4px;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  th { background: var(--panel-2); color: var(--accent-2); font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  .note {
+    border-left: 3px solid var(--accent);
+    background: rgba(77,140,255,0.08);
+    padding: 10px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .warn {
+    border-left: 3px solid var(--warn);
+    background: rgba(255,180,84,0.08);
+    padding: 10px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .danger {
+    border-left: 3px solid var(--danger);
+    background: rgba(255,107,107,0.08);
+    padding: 10px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) {
+    nav.toc { display: none; }
+    main { padding: 24px; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  footer { color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <h2>목차</h2>
+    <a href="#overview">개요</a>
+    <a href="#install">1. 설치</a>
+    <a href="#quickstart">2. 빠른 시작</a>
+    <a href="#workflow-ref">3. 레퍼런스 기반 복원</a>
+    <a href="#workflow-template">4. 템플릿으로 새 문서</a>
+    <a href="#workflow-edit">5. 기존 문서 직접 편집</a>
+    <a href="#workflow-extract">6. 텍스트 추출</a>
+    <a href="#workflow-validate">7. 검증</a>
+    <a href="#templates">템플릿 목록</a>
+    <a href="#scripts">스크립트 모음</a>
+    <a href="#units">단위 환산</a>
+    <a href="#rules">주의사항</a>
+  </nav>
+
+  <main>
+    <header class="hero" id="overview">
+      <h1>📄 hwpxskill 사용법</h1>
+      <p>한컴오피스 HWPX 문서를 AI 코딩 에이전트(Claude Code 등)에서 생성·편집·읽기 위한 스킬입니다.
+      OWPML XML을 직접 다뤄서 python-hwpx API의 서식 버그를 피하고, 원본 문서의 구조를 거의 그대로 유지한 채 내용만 바꿀 수 있습니다.</p>
+      <div class="badges">
+        <span class="badge">XML-first</span>
+        <span class="badge">레퍼런스 복원 우선</span>
+        <span class="badge">페이지 드리프트 가드</span>
+        <span class="badge">Claude Code / Cursor / Codex CLI</span>
+      </div>
+    </header>
+
+    <section id="install">
+      <h2><span class="num">1.</span>설치</h2>
+      <div class="card">
+        <h4>Claude Code</h4>
+        <pre><code># 이 프로젝트에서만 사용
+cp -r hwpxskill-main .claude/skills/hwpx
+
+# 모든 프로젝트에서 사용
+cp -r hwpxskill-main ~/.claude/skills/hwpx</code></pre>
+        <p>이후 <code>.hwpx</code> 파일을 다루는 요청을 하면 자동으로 이 스킬이 호출됩니다.</p>
+      </div>
+      <div class="card">
+        <h4>사전 준비</h4>
+        <pre><code>pip install lxml   # 가상환경 권장</code></pre>
+      </div>
+    </section>
+
+    <section id="quickstart">
+      <h2><span class="num">2.</span>빠른 시작 — 가장 흔한 사용 패턴</h2>
+      <p>대부분의 사용자는 스크립트를 직접 칠 필요가 없습니다. <b>채팅창에 .hwpx 파일을 첨부</b>하고 "이 양식 그대로 두고 OOO 내용으로 바꿔줘"라고 요청하면, Claude가 아래 단계를 자동으로 수행합니다.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <div class="body"><b>분석</b> — <code>analyze_template.py</code>로 원본의 header.xml / section0.xml을 추출</div>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <div class="body"><b>재작성</b> — 추출된 section XML을 복사해 구조는 유지하고 텍스트/데이터만 교체</div>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <div class="body"><b>빌드</b> — <code>build_hwpx.py</code>로 원본 header + 새 section을 조립</div>
+        </div>
+        <div class="step">
+          <div class="n">4</div>
+          <div class="body"><b>검증</b> — <code>validate.py</code>로 ZIP/XML 무결성 확인</div>
+        </div>
+        <div class="step">
+          <div class="n">5</div>
+          <div class="body"><b>페이지 가드</b> — <code>page_guard.py</code>로 원본 대비 쪽수 변동 여부 확인 (필수)</div>
+        </div>
+      </div>
+      <div class="note">page_guard.py를 통과하지 못하면 완료로 처리하지 않고, 텍스트 분량을 줄이거나 구조를 다시 맞춰 재빌드합니다.</div>
+    </section>
+
+    <section id="workflow-ref">
+      <h2><span class="num">3.</span>레퍼런스 기반 복원 (기본 워크플로우)</h2>
+      <p>첨부된 HWPX가 있을 때 기본으로 적용되는 흐름입니다. 수동으로 실행할 경우 명령어는 다음과 같습니다.</p>
+      <pre><code># 1) 레퍼런스 분석 + XML 추출
+python3 scripts/analyze_template.py reference.hwpx \
+  --extract-header /tmp/ref_header.xml \
+  --extract-section /tmp/ref_section.xml
+
+# 2) /tmp/ref_section.xml을 복제해 /tmp/new_section0.xml 작성
+#    (구조 유지, 텍스트/데이터만 요청에 맞게 수정)
+
+# 3) 복원 빌드
+python3 scripts/build_hwpx.py \
+  --header /tmp/ref_header.xml \
+  --section /tmp/new_section0.xml \
+  --output result.hwpx
+
+# 4) 검증
+python3 scripts/validate.py result.hwpx
+
+# 5) 쪽수 드리프트 가드 (필수)
+python3 scripts/page_guard.py --reference reference.hwpx --output result.hwpx</code></pre>
+      <h3>99% 근접 복원 체크리스트</h3>
+      <ul>
+        <li><code>charPrIDRef</code>, <code>paraPrIDRef</code>, <code>borderFillIDRef</code> 참조 체계 동일</li>
+        <li>표의 <code>rowCnt</code>, <code>colCnt</code>, <code>colSpan</code>, <code>rowSpan</code>, <code>cellSz</code>, <code>cellMargin</code> 동일</li>
+        <li>문단 순서·개수, 주요 빈 줄/구획 위치 동일</li>
+        <li>페이지/여백/섹션(secPr) 동일</li>
+        <li>변경은 사용자 요청 범위(본문 텍스트, 값, 항목명 등)로 제한</li>
+      </ul>
+    </section>
+
+    <section id="workflow-template">
+      <h2><span class="num">4.</span>템플릿으로 새 문서 만들기</h2>
+      <p>원본 파일이 없을 때, 내장 템플릿으로 바로 생성합니다.</p>
+      <pre><code># 빈 문서 (base 템플릿)
+python3 scripts/build_hwpx.py --output result.hwpx
+
+# 템플릿 지정
+python3 scripts/build_hwpx.py --template gonmun --output result.hwpx
+
+# section0.xml 오버라이드
+python3 scripts/build_hwpx.py --template gonmun --section my_section0.xml --output result.hwpx
+
+# 메타데이터 지정
+python3 scripts/build_hwpx.py --template report --section my.xml \
+  --title "제목" --creator "작성자" --output result.hwpx</code></pre>
+    </section>
+
+    <section id="workflow-edit">
+      <h2><span class="num">5.</span>기존 문서 직접 편집 (unpack → 수정 → pack)</h2>
+      <pre><code># 1) HWPX → 디렉토리 (XML pretty-print)
+python3 scripts/office/unpack.py document.hwpx ./unpacked/
+
+# 2) ./unpacked/Contents/section0.xml (본문), header.xml (스타일) 직접 수정
+
+# 3) 다시 HWPX로 패키징
+python3 scripts/office/pack.py ./unpacked/ edited.hwpx
+
+# 4) 검증
+python3 scripts/validate.py edited.hwpx</code></pre>
+    </section>
+
+    <section id="workflow-extract">
+      <h2><span class="num">6.</span>텍스트 추출</h2>
+      <pre><code># 순수 텍스트
+python3 scripts/text_extract.py document.hwpx
+
+# 표 포함
+python3 scripts/text_extract.py document.hwpx --include-tables
+
+# 마크다운 형식
+python3 scripts/text_extract.py document.hwpx --format markdown</code></pre>
+      <h3>폴더 일괄 변환</h3>
+      <p>여러 HWPX 파일을 한 폴더에 모아두고 한 번에 마크다운/텍스트로 바꿀 때 사용합니다.</p>
+      <pre><code># 폴더 안의 모든 .hwpx → 같은 폴더에 .md로
+python3 scripts/batch_extract.py ./hwpx_files --format markdown
+
+# 결과를 다른 폴더에 모아서 저장
+python3 scripts/batch_extract.py ./hwpx_files --format markdown --output-dir ./md_out
+
+# 하위 폴더까지 검색
+python3 scripts/batch_extract.py ./hwpx_files --recursive</code></pre>
+    </section>
+
+    <section id="workflow-validate">
+      <h2><span class="num">7.</span>검증</h2>
+      <pre><code>python3 scripts/validate.py document.hwpx</code></pre>
+      <p>검증 항목: ZIP 유효성, 필수 파일 존재, mimetype 내용/위치/압축방식, XML well-formedness.</p>
+    </section>
+
+    <section id="templates">
+      <h2>템플릿 목록</h2>
+      <table>
+        <tr><th>템플릿</th><th>용도</th><th>특징</th></tr>
+        <tr><td><code>base</code></td><td>기본 골격</td><td>최소 스타일, 빈 문서 시작점</td></tr>
+        <tr><td><code>gonmun</code></td><td>공문서</td><td>기관명, 수신처, 시행일자, 연락처</td></tr>
+        <tr><td><code>report</code></td><td>보고서</td><td>섹션 헤더, 들여쓰기, 체크박스</td></tr>
+        <tr><td><code>minutes</code></td><td>회의록</td><td>섹션 라벨, 테두리 구분</td></tr>
+        <tr><td><code>proposal</code></td><td>제안서/사업개요</td><td>색상 헤더바, 번호 배지</td></tr>
+      </table>
+    </section>
+
+    <section id="scripts">
+      <h2>스크립트 모음</h2>
+      <table>
+        <tr><th>스크립트</th><th>용도</th></tr>
+        <tr><td><code>scripts/build_hwpx.py</code></td><td><b>핵심</b> — 템플릿 + XML → HWPX 조립</td></tr>
+        <tr><td><code>scripts/analyze_template.py</code></td><td>레퍼런스 HWPX 심층 분석 (구조 청사진)</td></tr>
+        <tr><td><code>scripts/office/unpack.py</code></td><td>HWPX → 디렉토리 (XML pretty-print)</td></tr>
+        <tr><td><code>scripts/office/pack.py</code></td><td>디렉토리 → HWPX (mimetype 우선)</td></tr>
+        <tr><td><code>scripts/validate.py</code></td><td>HWPX 파일 구조 검증</td></tr>
+        <tr><td><code>scripts/page_guard.py</code></td><td>레퍼런스 대비 페이지 드리프트 검사 (필수 게이트)</td></tr>
+        <tr><td><code>scripts/text_extract.py</code></td><td>HWPX 텍스트 추출</td></tr>
+        <tr><td><code>scripts/batch_extract.py</code></td><td>폴더 내 모든 HWPX 일괄 텍스트 추출</td></tr>
+      </table>
+    </section>
+
+    <section id="units">
+      <h2>단위 환산 (HWPUNIT)</h2>
+      <table>
+        <tr><th>값</th><th>HWPUNIT</th><th>의미</th></tr>
+        <tr><td>1pt</td><td>100</td><td>기본 단위</td></tr>
+        <tr><td>10pt</td><td>1000</td><td>기본 글자크기</td></tr>
+        <tr><td>1mm</td><td>283.5</td><td>밀리미터</td></tr>
+        <tr><td>1cm</td><td>2835</td><td>센티미터</td></tr>
+        <tr><td>A4 폭</td><td>59528</td><td>210mm</td></tr>
+        <tr><td>A4 높이</td><td>84186</td><td>297mm</td></tr>
+        <tr><td>좌우여백</td><td>8504</td><td>30mm</td></tr>
+        <tr><td>본문폭</td><td>42520</td><td>150mm (A4-좌우여백)</td></tr>
+      </table>
+    </section>
+
+    <section id="rules">
+      <h2>꼭 알아야 할 주의사항</h2>
+      <div class="danger">
+        <b>.hwp(바이너리) 미지원</b> — 옛 한글 바이너리 포맷은 지원하지 않습니다. 한글 오피스에서 "다른 이름으로 저장 → HWPX"로 변환 후 사용하세요.
+      </div>
+      <div class="warn">
+        <b>쪽수 동일 필수</b> — 레퍼런스를 기반으로 작업할 때는 최종 결과의 쪽수가 원본과 같아야 합니다. <code>validate.py</code> 통과만으로는 완료가 아니며, <code>page_guard.py</code>까지 통과해야 완료로 간주합니다.
+      </div>
+      <div class="note">
+        <b>치환 우선 편집</b> — 사용자 요청이 없는 한 문단/표를 추가·삭제·분할·병합하지 않고, 기존 텍스트 노드를 교체하는 방식을 우선합니다.
+      </div>
+      <ul>
+        <li><b>secPr 필수</b>: section0.xml 첫 문단의 첫 run에 반드시 <code>secPr</code> + <code>colPr</code> 포함</li>
+        <li><b>mimetype 순서</b>: HWPX 패키징 시 mimetype은 첫 번째 ZIP 엔트리, ZIP_STORED 방식</li>
+        <li><b>네임스페이스 보존</b>: XML 편집 시 <code>hp:</code>, <code>hs:</code>, <code>hh:</code>, <code>hc:</code> 접두사 유지</li>
+        <li><b>itemCnt 정합성</b>: header.xml의 charProperties/paraProperties/borderFills의 itemCnt가 실제 자식 수와 일치해야 함</li>
+        <li><b>ID 참조 정합성</b>: section0.xml의 charPrIDRef/paraPrIDRef가 header.xml 정의와 일치해야 함</li>
+        <li><b>빈 줄</b>: <code>&lt;hp:t/&gt;</code> self-closing 태그 사용</li>
+      </ul>
+    </section>
+
+    <footer>
+      hwpxskill · OWPML XML-first HWPX skill for AI coding agents · <a href="https://github.com/dhyeok1331-droid/hwpxskill" style="color:var(--accent)">GitHub</a>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
