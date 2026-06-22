@@ -19,7 +19,7 @@ TESSERACT_CMD = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 MIN_TEXT_CHARS = 20
 OCR_DPI = 200
 MAX_PAGES = 200
-TIMEOUT_SECONDS = 120
+TIMEOUT_SECONDS = 480
 
 
 def _ocr_page(page) -> str:

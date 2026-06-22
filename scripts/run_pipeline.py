@@ -91,6 +91,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run the full hwp/excel/pdf -> Markdown pipeline on a folder")
     parser.add_argument("target_dir", help="Folder to process (scanned recursively)")
     parser.add_argument("--vault-dir", required=True, help="Output folder for all generated .md files")
+    parser.add_argument(
+        "--skip-hwp",
+        action="store_true",
+        help="Skip the hwp->hwpx conversion + archive step (e.g. while deferring a large one-time backlog)",
+    )
     args = parser.parse_args()
 
     target_dir = Path(args.target_dir)
@@ -100,12 +105,15 @@ def main() -> None:
         sys.exit(1)
     vault_dir.mkdir(parents=True, exist_ok=True)
 
-    run_step("1. hwp -> hwpx", [
-        str(SCRIPTS_DIR / "convert_hwp_to_hwpx.py"), str(target_dir), "--recursive", "--skip-existing",
-    ])
+    if args.skip_hwp:
+        print("Skipping hwp -> hwpx (--skip-hwp)", flush=True)
+    else:
+        run_step("1. hwp -> hwpx", [
+            str(SCRIPTS_DIR / "convert_hwp_to_hwpx.py"), str(target_dir), "--recursive", "--skip-existing",
+        ])
 
-    print(f"\n{'=' * 10} 2-3. validate + archive hwp originals {'=' * 10}", flush=True)
-    archive_converted_hwp(target_dir)
+        print(f"\n{'=' * 10} 2-3. validate + archive hwp originals {'=' * 10}", flush=True)
+        archive_converted_hwp(target_dir)
 
     run_step("4. hwpx -> md", [
         str(SCRIPTS_DIR / "batch_extract.py"), str(target_dir), "--recursive", "--skip-existing",
