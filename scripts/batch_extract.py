@@ -64,17 +64,22 @@ def main() -> None:
 
     ok, failed = 0, 0
     for src in files:
-        dest = (output_dir / src.with_suffix(ext).name) if output_dir else src.with_suffix(ext)
+        if output_dir:
+            dest_dir = output_dir / src.parent.relative_to(input_dir)
+            dest_dir.mkdir(parents=True, exist_ok=True)
+        else:
+            dest_dir = src.parent
+        dest = dest_dir / src.with_suffix(ext).name
         try:
             if args.format == "markdown":
                 result = extract_markdown(str(src))
             else:
                 result = extract_plain(str(src), include_tables=args.include_tables)
             dest.write_text(result, encoding="utf-8")
-            print(f"OK   {src} -> {dest}")
+            print(f"OK   {src} -> {dest}", flush=True)
             ok += 1
         except Exception as exc:
-            print(f"FAIL {src}: {exc}", file=sys.stderr)
+            print(f"FAIL {src}: {exc}", file=sys.stderr, flush=True)
             failed += 1
 
     print(f"\nDone: {ok} converted, {failed} failed.", file=sys.stderr)

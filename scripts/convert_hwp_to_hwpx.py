@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 
-def convert_folder(input_dir: Path, *, output_dir: Path | None, recursive: bool) -> tuple[int, int]:
+def convert_folder(input_dir: Path, *, output_dir: Path | None, recursive: bool, skip_existing: bool) -> tuple[int, int, int]:
     import win32com.client
 
     pattern = "**/*.hwp" if recursive else "*.hwp"
@@ -30,7 +30,7 @@ def convert_folder(input_dir: Path, *, output_dir: Path | None, recursive: bool)
     hwp.RegisterModule("FilePathCheckDLL", "FilePathCheckerModuleExample")
     hwp.XHwpWindows.Item(0).Visible = False
 
-    ok, failed = 0, 0
+    ok, failed, skipped = 0, 0, 0
     try:
         for src in files:
             if output_dir:
@@ -39,19 +39,25 @@ def convert_folder(input_dir: Path, *, output_dir: Path | None, recursive: bool)
             else:
                 dest_dir = src.parent
             dest = dest_dir / src.with_suffix(".hwpx").name
+
+            if skip_existing and dest.exists():
+                print(f"SKIP {src} (already converted)", flush=True)
+                skipped += 1
+                continue
+
             try:
                 hwp.Open(str(src))
                 hwp.SaveAs(str(dest), "HWPX")
                 hwp.Clear(1)
-                print(f"OK   {src} -> {dest}")
+                print(f"OK   {src} -> {dest}", flush=True)
                 ok += 1
             except Exception as exc:
-                print(f"FAIL {src}: {exc}", file=sys.stderr)
+                print(f"FAIL {src}: {exc}", file=sys.stderr, flush=True)
                 failed += 1
     finally:
         hwp.Quit()
 
-    return ok, failed
+    return ok, failed, skipped
 
 
 def main() -> None:
@@ -68,6 +74,11 @@ def main() -> None:
         action="store_true",
         help="Search subfolders as well",
     )
+    parser.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Skip files that already have a matching .hwpx output (for resuming an interrupted run)",
+    )
     args = parser.parse_args()
 
     if sys.platform != "win32":
@@ -83,9 +94,11 @@ def main() -> None:
     if output_dir:
         output_dir.mkdir(parents=True, exist_ok=True)
 
-    ok, failed = convert_folder(input_dir, output_dir=output_dir, recursive=args.recursive)
+    ok, failed, skipped = convert_folder(
+        input_dir, output_dir=output_dir, recursive=args.recursive, skip_existing=args.skip_existing
+    )
 
-    print(f"\nDone: {ok} converted, {failed} failed.", file=sys.stderr)
+    print(f"\nDone: {ok} converted, {skipped} skipped, {failed} failed.", file=sys.stderr)
     if failed:
         sys.exit(1)
 
